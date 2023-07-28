@@ -1,4 +1,4 @@
-# Video Chat App with WebRTC, React.js, Node.js, Socket.IO, and React Player
+# Video Chat App with WebRTC, React.js, Node.js, Socket.IO, and React Player(under developement)
 
 ## Introduction
 Welcome to the Video Chat App project! This is a simple video chatting application that leverages WebRTC technology to enable real-time video communication between users. The app is built using modern web technologies like React.js for the frontend, Node.js for the backend, Socket.IO for real-time communication, and React Player to display video streams.
