@@ -73,3 +73,21 @@ exports.signup = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.login = async (req, res, next) => {
+  passport.authenticate('local', function (err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(401).json({ message: 'Incorrect email or password.' });
+    }
+    req.logIn(user, function (err) {
+      if (err) {
+        return next(err);
+      }
+      const token = generateToken(user._id);
+      res.status(200).json({ token: token, user: user });
+    });
+  })(req, res, next);
+};
