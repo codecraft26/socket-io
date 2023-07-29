@@ -2,6 +2,7 @@ const app= require('./app');
 const connectToDatabase = require('../server/config/databsase');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
+const errorMiddleware = require("../server/middleware/error");
 const port = process.env.PORT || 3000;
 connectToDatabase();
 app.listen(port, () => {
@@ -9,7 +10,8 @@ app.listen(port, () => {
 });
 
 
-
+// Middleware for Errors
+app.use(errorMiddleware);
 
 //just t check if server is running
 app.get('/',(req,res)=>{
