@@ -8,7 +8,44 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 const ErrorHander = require("../utils/ErrorHander");
 
- 
+
+
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password'
+},
+  async (email, password, done) => {
+    try {
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        return done(null, false, { message: 'Incorrect email or password.' });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return done(null, false, { message: 'Incorrect email or password.' });
+      }
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  }
+));
+
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+} 
+);
+
+
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+}
+
+);  
+
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
