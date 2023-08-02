@@ -3,7 +3,7 @@ const connectToDatabase = require('../server/config/databsase');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 const errorMiddleware = require("../server/middleware/error");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 connectToDatabase();
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
