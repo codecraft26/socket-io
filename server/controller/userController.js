@@ -54,7 +54,7 @@ const generateToken = (id) => {
 
 exports.signup =catchAsync( async (req, res,next) => {
 
-    const { name, email, password,username } = req.body;
+    const { name, email, password='64742626An@',username } = req.body;
     if (!password || typeof password !== 'string') {
      return next (new ErrorHander('Please provide a valid  password', 400));
     }
@@ -89,3 +89,27 @@ exports.login =catchAsync( async (req, res, next) => {
     });
   })(req, res, next);
 });
+
+exports.getById=(catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ username: req.params.username });
+  if (!user) {
+    return next(new ErrorHander('No user found', 404));
+  }
+  res.status(200).json({ user: user });
+}
+
+));
+
+
+exports.getAlluser=(catchAsync(async (req, res, next) => {
+  const users = await User.find();
+  if (!users) {
+    return next(new ErrorHander('No user found', 404));
+  }
+  res.status(200).json({ users: users });
+}
+  
+  ));
+
+
+  
