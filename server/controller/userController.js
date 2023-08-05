@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 const ErrorHander = require("../utils/ErrorHander");
 
-
+const {sendToken} = require('../middleware/jwtToken');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -70,8 +70,7 @@ exports.signup =catchAsync( async (req, res,next) => {
       username:username
     });
     await newUser.save();
-    const token = generateToken(newUser._id);
-    res.status(201).json({ token: token,newUser });
+   sendToken(newUser, 201, res);
 });
 
 exports.login =catchAsync( async (req, res, next) => {
@@ -90,26 +89,19 @@ exports.login =catchAsync( async (req, res, next) => {
   })(req, res, next);
 });
 
-exports.getById=(catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ username: req.params.username });
-  if (!user) {
-    return next(new ErrorHander('No user found', 404));
-  }
-  res.status(200).json({ user: user });
-}
-
-));
 
 
-exports.getAlluser=(catchAsync(async (req, res, next) => {
+
+  
+exports.getAlluser = catchAsync(async (req, res, next) => {
   const users = await User.find();
-  if (!users) {
-    return next(new ErrorHander('No user found', 404));
-  }
-  res.status(200).json({ users: users });
+  res.status(200).json({ users });
 }
-  
-  ));
+);
 
 
-  
+exports.profile = catchAsync(async (req, res, next) => {
+  const {name,username,email} = await User.findById(req.user.id);
+  res.status(200).json({ name,username,email});
+}
+);
