@@ -9,7 +9,7 @@ dotenv.config({ path: './config/config.env' });
 const ErrorHander = require("../utils/ErrorHander");
 
 const {sendToken} = require('../middleware/jwtToken');
-
+const ApiFeatures = require('../utils/apiFeatures');
 passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
@@ -92,12 +92,23 @@ exports.login =catchAsync( async (req, res, next) => {
 
 
 
-  
+
+
 exports.getAlluser = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({ users });
-}
-);
+  const resultPerPage = 2; // number of results per page
+  const apiFeatures = new ApiFeatures(User.find(), req.query).pagination(resultPerPage);
+  const count = await User.countDocuments();
+  const users = await apiFeatures.query;
+
+  res.status(200).json({
+    status: 'success',
+    results: users.length,
+    data: {
+      users,
+      count,
+    },
+  });
+});
 
 
 exports.profile = catchAsync(async (req, res, next) => {
@@ -105,3 +116,21 @@ exports.profile = catchAsync(async (req, res, next) => {
   res.status(200).json({ name,username,email});
 }
 );
+
+exports.searchUsers = catchAsync(async (req, res, next) => {
+  const resultPerPage = 10; // number of results per page
+  const apiFeatures = new ApiFeatures(User.find(), req.query)
+    .search('email') // search for the query in the 'email' field
+    .pagination(resultPerPage);
+  const count = await User.countDocuments();
+  const users = await apiFeatures.query;
+
+  res.status(200).json({
+    status: 'success',
+    results: users.length,
+    data: {
+      users,
+      count,
+    },
+  });
+});
